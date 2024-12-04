@@ -2,6 +2,8 @@
 A zero trust, self hosted client and server password hosting
 
 
+# Secure Password Manager Project Proposal
+
 ## Project Overview
 
 This proposal outlines the implementation of a **secure password management system** with a **Rust backend** and a **Flutter-based mobile application**. The project emphasizes privacy and a multi-layered security approach using **device-specific identifiers**, **password-based encryption**, and **biometric verification**. The system is designed to provide robust user authentication through a **zero-trust model** after an initial setup, ensuring that only authorized devices and users can access the encrypted data.
@@ -106,15 +108,30 @@ flutter_client/
     └── ... (Any static assets like images, icons, etc.)
 ```
 
-## Done List
-- **Backend API Setup**: Implemented basic Rust backend using `actix-web` to create RESTful endpoints for device registration, login, and record management.
-- **Database Integration**: Integrated **MongoDB** for storing device registration hashes, user information, and encrypted records.
-- **Initial Device Registration**: Created a "Trust All" mode to allow initial device registration by accepting both password and hardware ID, which is then hashed and stored for future reference.
-- **Encryption and Hashing Utilities**: Implemented key derivation using **HMAC-SHA256** and AES encryption for securing both collections and individual records.
-- **Flutter App Basic Screens**: Developed core UI screens in Flutter for registration, login, home, and record viewing.
-- **Biometric Authentication**: Implemented **local_auth** for biometric verification (fingerprint or facial recognition) to ensure record-level access security.
+## Status Table
+
+| Feature/Task                             | Status       |
+|------------------------------------------|--------------|
+| Backend API Setup                        | ❌ Not Done   |
+| Database Integration                     | ❌ Not Done   |
+| Initial Device Registration              | ❌ Not Done   |
+| Encryption and Hashing Utilities         | ❌ Not Done   |
+| Flutter App Basic Screens                | ❌ Not Done   |
+| Biometric Authentication                 | ❌ Not Done   |
+| Frontend and Backend Integration         | ❌ Not Done   |
+| Complete Device Verification Logic       | ❌ Not Done   |
+| Enhanced Error Handling                  | ❌ Not Done   |
+| Data Encryption on Device                | ❌ Not Done   |
+| Automated Testing                        | ❌ Not Done   |
+| Scalability and Performance Testing      | ❌ Not Done   |
 
 ## TODO List
+- **Backend API Setup**: Implement Rust backend using `actix-web` to create RESTful endpoints for device registration, login, and record management.
+- **Database Integration**: Integrate **MongoDB** for storing device registration hashes, user information, and encrypted records.
+- **Initial Device Registration**: Create a "Trust All" mode to allow initial device registration by accepting both password and hardware ID, which is then hashed and stored for future reference.
+- **Encryption and Hashing Utilities**: Implement key derivation using **HMAC-SHA256** and AES encryption for securing both collections and individual records.
+- **Flutter App Basic Screens**: Develop core UI screens in Flutter for registration, login, home, and record viewing.
+- **Biometric Authentication**: Implement **local_auth** for biometric verification (fingerprint or facial recognition) to ensure record-level access security.
 - **Frontend and Backend Integration**: Finalize integration between the Flutter app and Rust backend to facilitate API requests for secure data transfer.
 - **Complete Device Verification Logic**: Ensure that all subsequent device interactions require a hash generated from both the **user password** and **hardware ID** to enforce the zero-trust model.
 - **Enhanced Error Handling**: Implement robust error handling for network failures, incorrect password inputs, and biometric verification failures.
