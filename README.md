@@ -1,12 +1,9 @@
 # ValutX
 A zero trust, self hosted client and server password hosting
 
-
-# Secure Password Manager Project Proposal
-
 ## Project Overview
 
-This proposal outlines the implementation of a **secure password management system** with a **Rust backend** and a **Flutter-based mobile application**. The project emphasizes privacy and a multi-layered security approach using **device-specific identifiers**, **password-based encryption**, and **biometric verification**. The system is designed to provide robust user authentication through a **zero-trust model** after an initial setup, ensuring that only authorized devices and users can access the encrypted data.
+This project outlines the implementation of a **secure password management system** with a **Rust backend** and a **Flutter-based mobile application**. The project emphasizes privacy and a multi-layered security approach using **device-specific identifiers**, **password-based encryption**, and **biometric verification**. The system is designed to provide robust user authentication through a **zero-trust model** after an initial setup, ensuring that only authorized devices and users can access the encrypted data.
 
 ### Key Features
 - **Collection and Record-Level Security**: Collections are encrypted using both a user password and a hardware-specific ID. Each record's detailed information is protected by **FIDO**-based biometric authentication.
