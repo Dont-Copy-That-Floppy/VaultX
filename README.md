@@ -1,46 +1,38 @@
-# ValutX
-A zero trust, self hosted client and server password hosting
+# **ValutX**
+A zero-trust, self-hosted password manager with end-to-end encryption and multi-factor authentication.
 
-## Project Overview
+## **Project Overview**
+ValutX is a **secure, open-source password manager** with a **Rust backend** and **Flutter frontend (Web, Android, iOS)**. It follows a **zero-trust security model**, ensuring that only **explicitly authorized devices** can access encrypted user data.
 
-This project outlines the implementation of a **secure password management system** with a **Rust backend** and a **Flutter-based mobile application**. The project emphasizes privacy and a multi-layered security approach using **device-specific identifiers**, **password-based encryption**, and **biometric verification**. The system is designed to provide robust user authentication through a **zero-trust model** after an initial setup, ensuring that only authorized devices and users can access the encrypted data.
+The backend is **lightweight** and **simple to deploy**, requiring **minimal setup**. After **first-time configuration**, all user data is **encrypted end-to-end** and stored securely in **MongoDB**.
 
-### Key Features
-- **Collection and Record-Level Security**: Collections are encrypted using both a user password and a hardware-specific ID. Each record's detailed information is protected by **FIDO**-based biometric authentication.
-- **Zero Trust Model**: After initial setup, all subsequent data access requests are validated against a stored device-hash for maximum security.
-- **Expandable Structure**: Supports different collection types, making it scalable for future categories such as Bank Info, Secure Notes, and Documents.
+---
 
-## Project Requirements
+## **Core Security Features**
+### **🔹 Zero-Trust Architecture**
+- **Strict device verification**: Every device is fingerprinted using **hardware ID, IP address, and TLS signature**.
+- **No trust assumptions**: If **ANY fingerprint detail changes**, the server **denies access**.
+- **All unknown devices and IPs are rejected** by default.
 
-### Technologies
-- **Server-Side (Rust Backend)**:
-  - Language: Rust
-  - Frameworks/Libraries: `actix-web`, `mongodb`, `rust-crypto` (for encryption)
-  - Database: MongoDB
+### **🔹 Strong Authentication & Access Control**
+- **Master Password Setup**: First-time configuration requires a **master password** to derive an encryption key.
+- **AES-256 Encryption**: All user data is stored **encrypted at rest**.
+- **Google Authenticator (TOTP) for Sync**: **Every sync request** requires **TOTP authentication**.
+- **FIDO/WebAuthn Biometric Authentication**: After device approval, biometrics can be used instead of passwords.
+- **Device Expiry Rule**: Devices inactive for **14+ days** require re-authentication.
 
-- **Client-Side (Flutter Mobile App)**:
-  - Language: Dart
-  - Frameworks/Libraries: Flutter SDK, `http`, `local_auth` (biometric auth), `encrypt` (AES encryption)
+### **🔹 Secure Data Management**
+- **Encrypted Key Backup & Recovery**: Users can **export an encrypted backup** of their server’s data.
+- **Strict Device Approval System**: 
+  - **Only preapproved devices** can enable **new device registration**.
+  - **New devices must be explicitly approved** before they can access the account.
+- **Security Audit Logging**: Every **login attempt, device addition, fingerprint mismatch, or failed authentication** is logged.
+- **User-Accessible Logs**: Users can **review security logs** in the app.
 
-### Dependencies
-- **Server-Side**:
-  - `actix-web` for creating RESTful APIs.
-  - `mongodb` crate for interacting with the MongoDB database.
-  - `hmac` and `sha2` for secure hash generation.
-- **Client-Side**:
-  - `flutter_secure_storage` for secure local storage.
-  - `encrypt` for client-side AES encryption.
-  - `local_auth` for integrating fingerprint and facial authentication.
+---
 
-### System Requirements
-- **Backend**: Rust environment, MongoDB, HTTPS endpoint for secure communication.
-- **Mobile**: Android or iOS device capable of biometric authentication, Flutter development environment.
-
-## Project Structure
-
-### File Tree
-
-#### Server-Side (Rust Backend)
+## **Project Structure**
+### **Backend (Rust)**
 ```plaintext
 rust_backend/
 │
@@ -48,101 +40,135 @@ rust_backend/
 │   ├── main.rs
 │   ├── api/
 │   │   ├── mod.rs
-│   │   ├── registration.rs
 │   │   ├── authentication.rs
+│   │   ├── registration.rs
 │   │   ├── records.rs
-│   │   └── devices.rs
+│   │   ├── devices.rs
+│   │   ├── backup.rs
+│   │   ├── webauthn.rs
 │   ├── db/
-│   │   ├── mod.rs
 │   │   ├── mongo_client.rs
-│   │   └── collections.rs
-│   ├── handlers/
-│   │   ├── register_handler.rs
-│   │   ├── auth_handler.rs
-│   │   └── records_handler.rs
+│   │   ├── collections.rs
+│   ├── middleware/
+│   │   ├── auth_middleware.rs
 │   ├── utils/
 │   │   ├── encryption.rs
 │   │   ├── hashing.rs
-│   │   └── key_management.rs
+│   │   ├── key_management.rs
+│   │   ├── logger.rs
 │   ├── models/
 │   │   ├── user.rs
 │   │   ├── device.rs
-│   │   └── record.rs
-│   └── config/
-│       ├── mod.rs
-│       └── config.rs
-│
-├── Cargo.toml
-└── .env
+│   │   ├── record.rs
+│   ├── config/
+│   │   ├── config.rs
+│   ├── Cargo.toml
+│   ├── .env
 ```
 
-#### Client-Side (Flutter Mobile App)
+### **Frontend (Flutter)**
 ```plaintext
 flutter_client/
 │
 ├── lib/
 │   ├── main.dart
 │   ├── screens/
-│   │   ├── registration_screen.dart
 │   │   ├── login_screen.dart
+│   │   ├── registration_screen.dart
 │   │   ├── home_screen.dart
 │   │   ├── record_detail_screen.dart
+│   │   ├── device_management_screen.dart
+│   │   ├── logs_screen.dart
 │   ├── models/
 │   │   ├── user.dart
 │   │   ├── record.dart
-│   └── services/
-│       ├── api_service.dart
-│       ├── auth_service.dart
-│       ├── encryption_service.dart
-│       └── device_info_service.dart
-│
-├── pubspec.yaml
-├── android/
-│   └── ... (Platform-specific code for Android, e.g., permissions)
-├── ios/
-│   └── ... (Platform-specific code for iOS, e.g., permissions)
-└── assets/
-    └── ... (Any static assets like images, icons, etc.)
+│   ├── services/
+│   │   ├── api_service.dart
+│   │   ├── auth_service.dart
+│   │   ├── encryption_service.dart
+│   │   ├── device_info_service.dart
+│   │   ├── webauthn_service.dart
+│   ├── pubspec.yaml
+│   ├── android/
+│   ├── ios/
+│   ├── web/
+│   ├── assets/
 ```
 
-## Status Table
+---
 
-| Feature/Task                             | Status       |
-|------------------------------------------|--------------|
-| Backend API Setup                        | ❌ Not Done   |
-| Database Integration                     | ❌ Not Done   |
-| Initial Device Registration              | ❌ Not Done   |
-| Encryption and Hashing Utilities         | ❌ Not Done   |
-| Flutter App Basic Screens                | ❌ Not Done   |
-| Biometric Authentication                 | ❌ Not Done   |
-| Frontend and Backend Integration         | ❌ Not Done   |
-| Complete Device Verification Logic       | ❌ Not Done   |
-| Enhanced Error Handling                  | ❌ Not Done   |
-| Data Encryption on Device                | ❌ Not Done   |
-| Automated Testing                        | ❌ Not Done   |
-| Scalability and Performance Testing      | ❌ Not Done   |
+## **Current Implementation Status**
+| Feature | Status |
+|---------|--------|
+| **Zero-Trust Security Model** | ✅ Implemented |
+| **Master Password Encryption** | ✅ Implemented |
+| **AES-256 Encryption for All Data** | ✅ Implemented |
+| **Device Fingerprinting (Hardware ID, IP, TLS Signature)** | ✅ Implemented |
+| **Reject All Unknown Devices/IPs** | ✅ Implemented |
+| **Google Authenticator (TOTP) for Sync** | ✅ Implemented |
+| **FIDO/WebAuthn Biometric Authentication** | ✅ Implemented |
+| **Device Expiry Rule (14-Day Limit)** | ✅ Implemented |
+| **Encrypted Key Backup & Recovery** | ✅ Implemented |
+| **Security Audit Logging (MongoDB Logs)** | ✅ Implemented |
+| **User-Accessible Logs (Web/Android/iOS UI)** | ✅ Implemented |
+| **Push Notifications for Security Alerts** | ❌ Not Implemented |
+| **Self-Destruct Mode (Optional Security Feature)** | ❌ Not Implemented |
 
-## TODO List
-- **Backend API Setup**: Implement Rust backend using `actix-web` to create RESTful endpoints for device registration, login, and record management.
-- **Database Integration**: Integrate **MongoDB** for storing device registration hashes, user information, and encrypted records.
-- **Initial Device Registration**: Create a "Trust All" mode to allow initial device registration by accepting both password and hardware ID, which is then hashed and stored for future reference.
-- **Encryption and Hashing Utilities**: Implement key derivation using **HMAC-SHA256** and AES encryption for securing both collections and individual records.
-- **Flutter App Basic Screens**: Develop core UI screens in Flutter for registration, login, home, and record viewing.
-- **Biometric Authentication**: Implement **local_auth** for biometric verification (fingerprint or facial recognition) to ensure record-level access security.
-- **Frontend and Backend Integration**: Finalize integration between the Flutter app and Rust backend to facilitate API requests for secure data transfer.
-- **Complete Device Verification Logic**: Ensure that all subsequent device interactions require a hash generated from both the **user password** and **hardware ID** to enforce the zero-trust model.
-- **Enhanced Error Handling**: Implement robust error handling for network failures, incorrect password inputs, and biometric verification failures.
-- **Data Encryption on Device**: Finalize the **encryption_service.dart** in Flutter to handle client-side decryption of titles and secure re-encryption after data access.
-- **Automated Testing**: Develop automated tests for both client-side (Flutter) and server-side (Rust) components to verify encryption workflows, registration, and authentication logic.
-- **Scalability and Performance Testing**: Conduct performance testing, especially on encryption/decryption operations, to ensure the app functions smoothly even with large datasets.
+---
 
-## Verbose Description of the Project
+## **How It Works**
+### **🔹 First-Time Setup**
+1. The server starts and prompts for a **master password**.
+2. The master password **encrypts all data in MongoDB**.
+3. A **Google Authenticator-compatible TOTP secret** is generated.
+4. The first device registers and is **fingerprinted**.
+5. This device is now **trusted**.
 
-The **Secure Password Manager** project aims to provide users with a highly secure platform for storing sensitive information like passwords, bank details, and notes. Unlike traditional password managers, this project ensures security at two distinct levels. During initial setup, a **Trust All mode** allows devices to be securely registered with the server by using both the **user password** and a **hardware-specific ID**. This generates a **combined hash** that is stored in a MongoDB database, ensuring future requests are validated against this hash.
+### **🔹 Regular Use**
+1. The client **authenticates using password + TOTP** on first sync.
+2. The **server checks fingerprint data**.
+   - If **everything matches**, no password/2FA is required.
+   - If **ANYTHING changes**, access is **denied**.
+3. **Biometric authentication** can be used instead of passwords for fast access.
+4. **All security events are logged**.
 
-After the initial setup, a **zero-trust model** is employed for all further access, meaning that every request made by the device to the server must prove its identity using the same **password + hardware ID hash** combination. This method ensures that even if an unauthorized individual gains access to the user's password, they would still require the physical device for successful authentication.
+### **🔹 Adding a New Device**
+1. A **preapproved device** must enable **new device registration**.
+2. The new device **requests access**.
+3. The **preapproved device must explicitly approve it**.
+4. The new device can now **use biometric authentication**.
+5. If **the new device is inactive for 2 weeks**, it must be reapproved.
 
-Furthermore, access to specific details of each record is secured with **FIDO-based biometric authentication**. This adds a second layer of security, meaning even registered devices must provide additional user verification to access sensitive details, such as usernames and passwords. The backend is written in **Rust** for its memory safety, performance, and reliability. The frontend is built using **Flutter**, which provides a cross-platform UI ensuring both **Android** and **iOS** devices are supported seamlessly.
+### **🔹 Backup & Recovery**
+1. Any **trusted device** can request an **encrypted database backup**.
+2. The backup is **fully encrypted** using the master password.
+3. **Restoration requires the master password** to decrypt.
 
-This project represents a **cutting-edge approach** to secure password management by utilizing modern encryption techniques, **multi-factor authentication**, and a **zero-trust philosophy**. The structure also facilitates easy expansion, allowing the future addition of collection types like **bank info**, **secure notes**, or **documents** without altering the core security framework.
+---
 
+## **Future Enhancements**
+🔹 **Push Notifications for Security Alerts** (Unauthorized logins, fingerprint mismatches)  
+🔹 **Self-Destruct Mode** (Optional security feature to wipe all data after too many failed attempts)  
+
+---
+
+## **How to Run**
+### **1. Start the Rust Backend**
+```sh
+cd rust_backend
+cargo run
+```
+
+### **2. Run the Flutter App**
+```sh
+cd flutter_client
+flutter run
+```
+
+### **3. Access the Web App**
+Open `http://localhost:8080` in a browser.
+
+---
+
+## **License**
+ValutX is **open-source software** licensed under **GPLv3**.
